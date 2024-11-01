@@ -1,7 +1,7 @@
 # ComfyUI-RecraftAI
 <p align="center"><img src="./assets/logo.png" alt="Recraft AI Logo" width="200"></p>
 
-This is a custom node for ComfyUI that allows you to use the Recraft AI API. XXXXXXXXXXXX
+This is a custom node for ComfyUI that allows you to use the Recraft AI API. Recraft V3 (code-named red_panda) is a text-to-image model with the ability to generate long texts, images in a wide list of styles, including custom brand styles. It's also possible to set up brand colors. As of today, it is SOTA in image generation, proven by Hugging Face’s industry-leading Text-to-Image Benchmark by Artificial Analysis.
 
 ## Requirements
 
@@ -14,6 +14,7 @@ Before using this node, you need to have a Recraft AI API key. To generate a key
 1. Navigate to the `ComfyUI/custom_nodes` directory.
 
 2. Clone this repository: `git clone https://github.com/recraft-ai/ComfyUI-RecraftAI.git`
+
    The files should be located as `ComfyUI/custom_nodes/ComfyUI-RecraftAI/*`, where `*` represents all the files in this repo.
   
 3. Install the dependencies:
