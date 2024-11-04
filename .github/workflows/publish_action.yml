@@ -1,6 +1,5 @@
 name: Publish to Comfy Registry
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
