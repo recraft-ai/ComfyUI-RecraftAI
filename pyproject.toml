@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-recraftai"
-description = "This custom node represents the Recraft AI API"
+description = "Recraft AI API Custom Nodes"
 version = "1.0.0"
 license = {file = "LICENSE"}
 dependencies = ["requests", "torch", "Pillow", "numpy"]
@@ -12,4 +12,4 @@ Repository = "https://github.com/recraft-ai/ComfyUI-RecraftAI"
 [tool.comfy]
 PublisherId = "recraftai"
 DisplayName = "ComfyUI-RecraftAI"
-Icon = "https://www.recraft.ai/favicons/icon-512.png"
+Icon = "https://www.recraft.ai/favicons/icon-192.png"
