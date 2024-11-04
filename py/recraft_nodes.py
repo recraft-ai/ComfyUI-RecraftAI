@@ -54,7 +54,7 @@ class RecraftClient:
             self._BASE_URL + '/images/generations',
             headers={'Authorization': f'Bearer {self._token}'},
             json={
-                'prompt': prompt or None,
+                'prompt': prompt,
                 'model': model or None,
                 'style': style or None,
                 'substyle': substyle or None,
