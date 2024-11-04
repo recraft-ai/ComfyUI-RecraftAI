@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-recraftai"
 description = "Recraft AI API Custom Nodes"
-version = "1.0.0"
+version = "1.0.1"
 license = {file = "LICENSE"}
 dependencies = ["requests", "torch", "Pillow", "numpy"]
 
