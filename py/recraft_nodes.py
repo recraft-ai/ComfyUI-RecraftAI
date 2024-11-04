@@ -49,16 +49,17 @@ class RecraftClient:
     def __init__(self, token):
         self._token = token
 
-    def generate_image(self, prompt, model=None, image_size=None, style=None, substyle=None):
+    def generate_image(self, prompt, model=None, image_size=None, style=None, substyle=None, random_seed=None):
         response = requests.post(
             self._BASE_URL + '/images/generations',
             headers={'Authorization': f'Bearer {self._token}'},
             json={
-                'prompt': prompt,
+                'prompt': prompt or None,
                 'model': model or None,
                 'style': style or None,
                 'substyle': substyle or None,
-                'image_size': image_size or None,
+                'size': image_size or None,
+                'random_seed': random_seed or None,
             }
         )
         data = response.json()
@@ -102,7 +103,7 @@ class ImageGenerator:
     CATEGORY = 'RecraftAI'
     FUNCTION = 'generate'
     RETURN_TYPES = ('IMAGE',)
-    RETURN_NAMES = ('image_url',)
+    RETURN_NAMES = ('image',)
     OUTPUT_NODE = True
 
     @classmethod
@@ -136,26 +137,34 @@ class ImageGenerator:
                 'image_size': ([
                     '',
                     '1024x1024',
-                    '1365x1024',
+                    '1024x1280',
                     '1024x1365',
-                    '1536x1024',
+                    '1024x1434',
                     '1024x1536',
-                    '1820x1024',
+                    '1024x1707',
                     '1024x1820',
                     '1024x2048',
-                    '2048x1024',
-                    '1434x1024',
-                    '1024x1434',
-                    '1024x1280',
                     '1280x1024',
-                    '1024x1707',
+                    '1365x1024',
+                    '1434x1024',
+                    '1536x1024',
                     '1707x1024',
+                    '1820x1024',
+                    '2048x1024',
                 ],),
                 'model': ([
                     '',
                     'recraftv3',
                     'recraft20b',
                 ],),
+                'seed': ("INT", {
+                    "default": 0,
+                    "min": 0,
+                    "max": 2147483647,
+                    "step": 1,
+                    "display": "number",
+                    "lazy": True
+                }),
             },
         }
 
@@ -163,7 +172,7 @@ class ImageGenerator:
     '''
     Generate an image given a prompt
     '''
-    def generate(self, client, prompt, style, substyle, image_size, model):
+    def generate(self, client, prompt, style, substyle, image_size, model, seed):
         if prompt == '':
             raise ValueError('Prompt is required')
 
@@ -172,6 +181,8 @@ class ImageGenerator:
             image_size=image_size,
             style=style,
             substyle=substyle,
+            model=model,
+            random_seed=seed
         )
         image_data = _fetch_image(image_url)
         return (_make_tensor(image_data),)
