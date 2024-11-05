@@ -43,6 +43,18 @@ def _make_tensor(image_data):
     return torch.from_numpy(image_np)[None,]
 
 
+def _make_image_data(tensor):
+    tensor_np = tensor.numpy()
+    if tensor_np.dtype == np.float32 or tensor_np.dtype == np.float64:
+        tensor_np = (tensor_np * 255).clip(0, 255).astype(np.uint8)
+
+    image = Image.fromarray(tensor_np)
+
+    buffer = io.BytesIO()
+    image.save(buffer, format='PNG')
+    return buffer.getvalue()
+
+
 class RecraftClient:
     _BASE_URL = 'https://external.api.recraft.ai/v1'
 
@@ -66,6 +78,26 @@ class RecraftClient:
         if 'code' in data:
             raise ValueError(data.get('message', 'empty error message'))
         return data['data'][0]['url']
+
+    def __process_image(self, operation, image_data):
+        response = requests.post(
+            self._BASE_URL + '/images/{operation}',
+            headers={'Authorization': f'Bearer {self._token}'},
+            files={'file': io.BytesIO(image_data)},
+        )
+        data = response.json()
+        if 'code' in data:
+            raise ValueError(data.get('message', 'empty error message'))
+        return data['data'][0]['url']
+
+    def remove_background(self, image_data):
+        return self.__process_image('removeBackground', image_data)
+
+    def generative_upscale(self, image_data):
+        return self.__process_image('generativeUpscale', image_data)
+
+    def clarity_upscale(self, image_data):
+        return self.__process_image('clarityUpscale', image_data)
 
 
 class Client:
@@ -184,5 +216,31 @@ class ImageGenerator:
             model=model,
             random_seed=seed
         )
+        image_data = _fetch_image(image_url)
+        return (_make_tensor(image_data),)
+
+
+class BackgroundRemover:
+    CATEGORY = 'RecraftAI'
+    FUNCTION = 'remove_background'
+    RETURN_TYPES = ('IMAGE',)
+    RETURN_NAMES = ('image',)
+    OUTPUT_NODE = True
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            'required': {
+                'client': ('RECRAFTCLIENT', {'forceInput': True}),
+                'image': ('IMAGE', {'forceInput': True}),
+            },
+        }
+
+
+    '''
+    Remove background of the given image
+    '''
+    def remove_background(self, client, image):
+        image_url = client.remove_background(_make_image_data(image))
         image_data = _fetch_image(image_url)
         return (_make_tensor(image_data),)
