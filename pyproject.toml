@@ -1,13 +1,12 @@
 [project]
 name = "comfyui-recraftai"
 description = "Recraft AI API Custom Nodes"
-version = "1.0.1"
+version = "1.0.2"
 license = {file = "LICENSE"}
 dependencies = ["requests", "torch", "Pillow", "numpy"]
 
 [project.urls]
 Repository = "https://github.com/recraft-ai/ComfyUI-RecraftAI"
-#  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
 PublisherId = "recraftai"
