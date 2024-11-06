@@ -5,10 +5,7 @@ import os
 from PIL import Image
 import numpy
 import torch
-from torchvision.utils import save_image
 import requests
-
-import folder_paths
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,9 +34,6 @@ def _fetch_image(url):
 
 def _make_tensor(image_data):
     with Image.open(io.BytesIO(image_data)) as image:
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-
         image_np = numpy.array(image).astype(numpy.float32) / 255.0
         tensor = torch.from_numpy(image_np)[None,]
         return tensor
@@ -206,7 +200,6 @@ class ImageGenerator:
             },
         }
 
-
     '''
     Generate an image given a prompt
     '''
@@ -253,7 +246,6 @@ class BackgroundRemover:
                 }),
             },
         }
-
 
     '''
     Remove background of the given image
