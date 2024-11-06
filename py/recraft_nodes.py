@@ -2,11 +2,11 @@ import configparser
 import io
 import os
 
-import PIL
+from PIL import Image
 import numpy
 import torch
+from torchvision.utils import save_image
 import requests
-import torchvision.transforms.functional as transforms
 
 import folder_paths
 
@@ -31,28 +31,31 @@ except KeyError:
 
 
 def _fetch_image(url):
-    return requests.get(url, stream=True).content
+    with requests.get(url, stream=True) as req:
+        return req.content
 
 
 def _make_tensor(image_data):
-    image = PIL.Image.open(io.BytesIO(image_data))
-    if image.mode != "RGB":
-        image = image.convert("RGB")
-    
-    image_np = numpy.array(image).astype(numpy.float32) / 255.0
-    return torch.from_numpy(image_np)[None,]
+    with Image.open(io.BytesIO(image_data)) as image:
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+
+        image_np = numpy.array(image).astype(numpy.float32) / 255.0
+        tensor = torch.from_numpy(image_np)[None,]
+        return tensor
 
 
 def _make_image_data(tensor):
-    tensor_np = tensor.numpy()
-    if tensor_np.dtype == np.float32 or tensor_np.dtype == np.float64:
-        tensor_np = (tensor_np * 255).clip(0, 255).astype(np.uint8)
+    tensor_np = tensor[0].numpy()
+    if tensor_np.dtype == numpy.float32 or tensor_np.dtype == numpy.float64:
+        tensor_np = (tensor_np * 255).clip(0, 255).astype(numpy.uint8)
 
     image = Image.fromarray(tensor_np)
 
     buffer = io.BytesIO()
     image.save(buffer, format='PNG')
-    return buffer.getvalue()
+    image_data = buffer.getvalue()
+    return image_data
 
 
 class RecraftClient:
@@ -79,25 +82,28 @@ class RecraftClient:
             raise ValueError(data.get('message', 'empty error message'))
         return data['data'][0]['url']
 
-    def __process_image(self, operation, image_data):
-        response = requests.post(
-            self._BASE_URL + '/images/{operation}',
-            headers={'Authorization': f'Bearer {self._token}'},
-            files={'file': io.BytesIO(image_data)},
-        )
+    def __process_image(self, operation, image_data, random_seed=None):
+        with io.BytesIO(image_data) as fp:
+            response = requests.post(
+                self._BASE_URL + f'/images/{operation}',
+                headers={'Authorization': f'Bearer {self._token}'},
+                json={'random_seed': random_seed or None},
+                files={'file': fp},
+            )
+
         data = response.json()
         if 'code' in data:
             raise ValueError(data.get('message', 'empty error message'))
-        return data['data'][0]['url']
+        return data['image']['url']
 
-    def remove_background(self, image_data):
-        return self.__process_image('removeBackground', image_data)
+    def remove_background(self, image_data, random_seed=None):
+        return self.__process_image('removeBackground', image_data, random_seed=random_seed)
 
-    def generative_upscale(self, image_data):
-        return self.__process_image('generativeUpscale', image_data)
+    def generative_upscale(self, image_data, random_seed=None):
+        return self.__process_image('generativeUpscale', image_data, random_seed=random_seed)
 
-    def clarity_upscale(self, image_data):
-        return self.__process_image('clarityUpscale', image_data)
+    def clarity_upscale(self, image_data, random_seed=None):
+        return self.__process_image('clarityUpscale', image_data, random_seed=random_seed)
 
 
 class Client:
@@ -189,13 +195,13 @@ class ImageGenerator:
                     'recraftv3',
                     'recraft20b',
                 ],),
-                'seed': ("INT", {
-                    "default": 0,
-                    "min": 0,
-                    "max": 2147483647,
-                    "step": 1,
-                    "display": "number",
-                    "lazy": True
+                'seed': ('INT', {
+                    'default': 0,
+                    'min': 0,
+                    'max': 2147483647,
+                    'step': 1,
+                    'display': 'number',
+                    'lazy': True
                 }),
             },
         }
@@ -214,10 +220,13 @@ class ImageGenerator:
             style=style,
             substyle=substyle,
             model=model,
-            random_seed=seed
+            random_seed=seed,
         )
+        print('Generated image', image_url)
+
         image_data = _fetch_image(image_url)
-        return (_make_tensor(image_data),)
+        tensor = _make_tensor(image_data)
+        return (tensor,)
 
 
 class BackgroundRemover:
@@ -234,13 +243,25 @@ class BackgroundRemover:
                 'client': ('RECRAFTCLIENT', {'forceInput': True}),
                 'image': ('IMAGE', {'forceInput': True}),
             },
+            'optional': {
+                'seed': ('INT', {
+                    'default': 0,
+                    'min': 0,
+                    'max': 2147483647,
+                    'step': 1,
+                    'display': 'number',
+                }),
+            },
         }
 
 
     '''
     Remove background of the given image
     '''
-    def remove_background(self, client, image):
-        image_url = client.remove_background(_make_image_data(image))
+    def remove_background(self, client, image, seed):
+        image_url = client.remove_background(_make_image_data(image), random_seed=seed)
+        print('Removed background', image_url)
+
         image_data = _fetch_image(image_url)
-        return (_make_tensor(image_data),)
+        tensor = _make_tensor(image_data)
+        return (tensor,)
