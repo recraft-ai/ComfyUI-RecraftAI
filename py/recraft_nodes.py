@@ -257,3 +257,77 @@ class BackgroundRemover:
         image_data = _fetch_image(image_url)
         tensor = _make_tensor(image_data)
         return (tensor,)
+
+
+class ClarityUpscaler:
+    CATEGORY = 'RecraftAI'
+    FUNCTION = 'clarity_upscale'
+    RETURN_TYPES = ('IMAGE',)
+    RETURN_NAMES = ('image',)
+    OUTPUT_NODE = True
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            'required': {
+                'client': ('RECRAFTCLIENT', {'forceInput': True}),
+                'image': ('IMAGE', {'forceInput': True}),
+            },
+            'optional': {
+                'seed': ('INT', {
+                    'default': 0,
+                    'min': 0,
+                    'max': 2147483647,
+                    'step': 1,
+                    'display': 'number',
+                }),
+            },
+        }
+
+    '''
+    Clarity upscale of the given image
+    '''
+    def clarity_upscale(self, client, image, seed):
+        image_url = client.clarity_upscale(_make_image_data(image), random_seed=seed)
+        print('Clarity upscale finished', image_url)
+
+        image_data = _fetch_image(image_url)
+        tensor = _make_tensor(image_data)
+        return (tensor,)
+
+
+class GenerativeUpscaler:
+    CATEGORY = 'RecraftAI'
+    FUNCTION = 'generative_upscale'
+    RETURN_TYPES = ('IMAGE',)
+    RETURN_NAMES = ('image',)
+    OUTPUT_NODE = True
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            'required': {
+                'client': ('RECRAFTCLIENT', {'forceInput': True}),
+                'image': ('IMAGE', {'forceInput': True}),
+            },
+            'optional': {
+                'seed': ('INT', {
+                    'default': 0,
+                    'min': 0,
+                    'max': 2147483647,
+                    'step': 1,
+                    'display': 'number',
+                }),
+            },
+        }
+
+    '''
+    Generative upscale of the given image
+    '''
+    def generative_upscale(self, client, image, seed):
+        image_url = client.generative_upscale(_make_image_data(image), random_seed=seed)
+        print('Generative upscale finished', image_url)
+
+        image_data = _fetch_image(image_url)
+        tensor = _make_tensor(image_data)
+        return (tensor,)
