@@ -3,8 +3,8 @@ from .recraft_nodes import (
     ImageGenerator,
     ImageToImageTransformer,
     BackgroundRemover,
-    ClarityUpscaler,
-    GenerativeUpscaler,
+    CrispUpscaler,
+    CreativeUpscaler,
     BackgroundReplacer,
     Inpainter,
 )
@@ -14,8 +14,8 @@ NODE_CLASS_MAPPINGS = {
     'RecraftImageGenerator': ImageGenerator,
     'RecraftImageToImageTransformer': ImageToImageTransformer,
     'RecraftBackgroundRemover': BackgroundRemover,
-    'RecraftClarityUpscaler': ClarityUpscaler,
-    'RecraftGenerativeUpscaler': GenerativeUpscaler,
+    'RecraftClarityUpscaler': CrispUpscaler,
+    'RecraftGenerativeUpscaler': CreativeUpscaler,
     'RecraftBackgroundReplacer': BackgroundReplacer,
     'RecraftInpainter': Inpainter,
 }
@@ -25,8 +25,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     'RecraftImageGenerator': 'RecraftAI Image Generator',
     'RecraftImageToImageTransformer': 'RecraftAI Image To Image Transformer',
     'RecraftBackgroundRemover': 'RecraftAI Background Remover',
-    'RecraftClarityUpscaler': 'RecraftAI Clarity Upscaler',
-    'RecraftGenerativeUpscaler': 'RecraftAI Generative Upscaler',
+    'RecraftClarityUpscaler': 'RecraftAI Crisp Upscaler',
+    'RecraftGenerativeUpscaler': 'RecraftAI Creative Upscaler',
     'RecraftBackgroundReplacer': 'RecraftAI Background Replacer',
     'RecraftInpainter': 'RecraftAI Inpainter',
 }

@@ -172,11 +172,11 @@ class RecraftClient:
     def remove_background(self, image_data, random_seed=None):
         return self.__process_image('removeBackground', image_data, random_seed=random_seed)
 
-    def generative_upscale(self, image_data, random_seed=None):
-        return self.__process_image('generativeUpscale', image_data, random_seed=random_seed)
+    def creative_upscale(self, image_data, random_seed=None):
+        return self.__process_image('creativeUpscale', image_data, random_seed=random_seed)
 
-    def clarity_upscale(self, image_data, random_seed=None):
-        return self.__process_image('clarityUpscale', image_data, random_seed=random_seed)
+    def crisp_upscale(self, image_data, random_seed=None):
+        return self.__process_image('crispUpscale', image_data, random_seed=random_seed)
     
     def replace_background(self, image_data, params, random_seed=None):
         return self.__process_image('replaceBackground', image_data, params=params, random_seed=random_seed)
@@ -343,9 +343,9 @@ class BackgroundRemover:
         return (tensor,)
 
 
-class ClarityUpscaler:
+class CrispUpscaler:
     CATEGORY = 'RecraftAI'
-    FUNCTION = 'clarity_upscale'
+    FUNCTION = 'crisp_upscale'
     RETURN_TYPES = ('IMAGE',)
     RETURN_NAMES = ('image',)
     OUTPUT_NODE = True
@@ -369,20 +369,20 @@ class ClarityUpscaler:
         }
 
     '''
-    Clarity upscale of the given image
+    Crisp upscale of the given image
     '''
-    def clarity_upscale(self, client, image, seed):
-        image_url = client.clarity_upscale(_make_image_data(image), random_seed=seed)
-        print('Clarity upscale finished', image_url)
+    def crisp_upscale(self, client, image, seed):
+        image_url = client.crisp_upscale(_make_image_data(image), random_seed=seed)
+        print('Crisp upscale finished', image_url)
 
         image_data = _fetch_image(image_url)
         tensor = _make_tensor(image_data)
         return (tensor,)
 
 
-class GenerativeUpscaler:
+class CreativeUpscaler:
     CATEGORY = 'RecraftAI'
-    FUNCTION = 'generative_upscale'
+    FUNCTION = 'creative_upscale'
     RETURN_TYPES = ('IMAGE',)
     RETURN_NAMES = ('image',)
     OUTPUT_NODE = True
@@ -400,11 +400,11 @@ class GenerativeUpscaler:
         }
 
     '''
-    Generative upscale of the given image
+    Creative upscale of the given image
     '''
-    def generative_upscale(self, client, image, seed):
-        image_url = client.generative_upscale(_make_image_data(image), random_seed=seed)
-        print('Generative upscale finished', image_url)
+    def creative_upscale(self, client, image, seed):
+        image_url = client.creative_upscale(_make_image_data(image), random_seed=seed)
+        print('Creative upscale finished', image_url)
 
         image_data = _fetch_image(image_url)
         tensor = _make_tensor(image_data)

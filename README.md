@@ -43,11 +43,11 @@ This node is used to transform an input image into an output image given a text 
 
 This node is used to remove background of an image.
 
-### RecraftAI Clarity Upscaler
+### RecraftAI Crisp Upscaler
 
 This node is used to enhance an image using ‘crisp upscale’ tool, increasing image resolution, making the image sharper and cleaner.
 
-### RecraftAI Generative Upscaler
+### RecraftAI Creative Upscaler
 
 This node is used to enhance an image using ‘creative upscale’ tool, boosting resolution with a focus on refining small details and faces.
 
