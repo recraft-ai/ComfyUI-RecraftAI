@@ -35,6 +35,30 @@ This node is used to create a Recraft AI client.
 
 This node is used to generate an image given a text prompt.
 
+### RecraftAI Image To Image Transformer
+
+This node is used to transform an input image into an output image given a text prompt.
+
+### RecraftAI Background Remover
+
+This node is used to remove background of an image.
+
+### RecraftAI Clarity Upscaler
+
+This node is used to enhance an image using ‘crisp upscale’ tool, increasing image resolution, making the image sharper and cleaner.
+
+### RecraftAI Generative Upscaler
+
+This node is used to enhance an image using ‘creative upscale’ tool, boosting resolution with a focus on refining small details and faces.
+
+### RecraftAI Background Replacer
+
+This node is used to detect and replace background of an image according to a given text prompt.
+
+### RecraftAI Inpainter
+
+This node is used to modify specific parts of an image according to mask and text prompt. You should use ComfyUI mask for an input mask. Note, that pixels with mask values >= 0.5 will be filled based on the prompt, while others will keep intact.
+
 ## API Documentation
 
 For more information about the Recraft AI API, follow [the documentation](https://www.recraft.ai/docs).

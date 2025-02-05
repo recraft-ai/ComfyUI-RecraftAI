@@ -97,13 +97,11 @@ def _make_image_data(tensor, is_mask=False):
     if tensor_np.dtype == numpy.float32 or tensor_np.dtype == numpy.float64:
         tensor_np = (tensor_np * 255).clip(0, 255).astype(numpy.uint8)
 
-    image = Image.fromarray(tensor_np)
-
     if is_mask:
-        image = image.convert('L')
-        tensor_np = numpy.array(image)
-        tensor_np = numpy.where(tensor_np > 0, 255, 0).astype(numpy.uint8)
-        image = Image.fromarray(tensor_np)
+        # we do not force the mask to be binary, but we do threshold it
+        tensor_np = numpy.where(tensor_np >= 127.5, 255, 0).astype(numpy.uint8)
+
+    image = Image.fromarray(tensor_np)
 
     buffer = io.BytesIO()
     image.save(buffer, format='PNG')
@@ -246,7 +244,7 @@ class ImageGenerator:
         }
 
     '''
-    Generate an image given a prompt
+    Generate an image given a text prompt
     '''
     def generate(self, client, prompt, style, substyle, image_size, model, seed):
         if prompt == '':
@@ -267,7 +265,7 @@ class ImageGenerator:
         return (tensor,)
 
 
-class ImageToImageGenerator:
+class ImageToImageTransformer:
     CATEGORY = 'RecraftAI'
     FUNCTION = 'image_to_image'
     RETURN_TYPES = ('IMAGE',)
@@ -291,7 +289,7 @@ class ImageToImageGenerator:
         }
 
     '''
-    Generate an image given image and prompt
+    Transform an input image into an output image given a text prompt
     '''
     def image_to_image(self, client, image, prompt, strength, style, substyle, seed):
         if prompt == '':
@@ -471,7 +469,7 @@ class Inpainter:
             'required': {
                 'client': ('RECRAFTCLIENT', {'forceInput': True}),
                 'image': ('IMAGE', {'forceInput': True}),
-                'mask': ('IMAGE', {'forceInput': True}),
+                'mask': ('MASK', {'forceInput': True}),
                 'prompt': ('STRING', {'multiline': True, 'default': ''}),
             },
             'optional': {
