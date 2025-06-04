@@ -114,11 +114,15 @@ class RecraftClient:
 
     def __init__(self, token):
         self._token = token
+        self._headers = {
+            'Authorization': f'Bearer {self._token}',
+            'X-Client-Type': 'ComfyUI-RecraftAI',
+        }
 
     def generate_image(self, prompt, model=None, image_size=None, style=None, substyle=None, random_seed=None):
         response = requests.post(
             self._BASE_URL + '/images/generations',
-            headers={'Authorization': f'Bearer {self._token}'},
+            headers=self._headers,
             json={
                 'prompt': prompt,
                 'model': model or None,
@@ -143,7 +147,7 @@ class RecraftClient:
             if mask_data is None:
                 response = requests.post(
                     self._BASE_URL + f'/images/{operation}',
-                    headers={'Authorization': f'Bearer {self._token}'},
+                    headers=self._headers,
                     data=params,
                     files={'image': image_fp},
                 )
@@ -151,7 +155,7 @@ class RecraftClient:
                 with io.BytesIO(mask_data) as mask_fp:
                     response = requests.post(
                         self._BASE_URL + f'/images/{operation}',
-                        headers={'Authorization': f'Bearer {self._token}'},
+                        headers=self._headers,
                         data=params,
                         files={'image': image_fp, 'mask': mask_fp},
                     )
